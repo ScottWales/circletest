@@ -1,0 +1,74 @@
+version: 2.0
+jobs:
+    2.7:
+        working_directory: /circleci
+        docker:
+            - image: scottwales/conda-build
+
+        steps:
+            - checkout
+
+            - run: |
+                conda build conda --python=${CIRCLECI_JOB}
+
+            - run: |
+                mkdir /artefacts
+                cp $(conda build conda --python=${CIRCLECI_JOB} --output) /artefacts
+
+            - persist_to_workspace:
+                root: /artefacts
+                paths: *
+
+    3.6:
+        working_directory: /circleci
+        docker:
+            - image: scottwales/conda-build
+
+        steps:
+            - checkout
+
+            - run: |
+                conda build conda --python=${CIRCLECI_JOB}
+
+            - run: |
+                mkdir /artefacts
+                cp $(conda build conda --python=${CIRCLECI_JOB} --output) /artefacts
+
+            - persist_to_workspace:
+                root: /artefacts
+                paths: *
+
+    publish:
+        working_directory: /circleci
+        docker:
+            - image: scottwales/conda-build
+        steps:
+            - attach_workspace:
+                at: /artefacts
+
+            - run:
+                anaconda --token ${ANACONDA_TOKEN} upload /artefacts
+
+workflows:
+    version: 2
+    conda_build_and_upload:
+        jobs:
+            - 2.7:
+                filters:
+                    tags:
+                        only: /.*/
+            - 3.6:
+                filters:
+                    tags:
+                        only: /.*/
+            - conda_upload:
+                requires:
+                    - '2.7'
+                    - '3.6'
+                filters:
+                    tags:
+                        only: /.*/
+                    branches:
+                        ignore: /.*/
+
+
