@@ -19,7 +19,7 @@ jobs:
 
             - persist_to_workspace:
                 root: /artefacts
-                paths: *
+                paths: '*'
 
     py36:
         working_directory: /circleci
@@ -40,7 +40,7 @@ jobs:
 
             - persist_to_workspace:
                 root: /artefacts
-                paths: *
+                paths: '*'
 
     publish:
         working_directory: /circleci
