@@ -57,10 +57,12 @@ workflows:
                 filters:
                     tags:
                         only: /.*/
+
             - 3.6:
                 filters:
                     tags:
                         only: /.*/
+
             - conda_upload:
                 requires:
                     - '2.7'
