@@ -55,7 +55,7 @@ jobs:
 
 workflows:
     version: 2
-    conda_build_and_upload:
+    build_and_publsh:
         jobs:
             - py27:
                 filters:
@@ -67,7 +67,7 @@ workflows:
                     tags:
                         only: /.*/
 
-            - conda_upload:
+            - publish:
                 requires:
                     - py27
                     - py36
