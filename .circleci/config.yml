@@ -1,38 +1,42 @@
 version: 2.0
 jobs:
-    2.7:
+    py27:
         working_directory: /circleci
         docker:
             - image: scottwales/conda-build
+            - environment:
+                PYTHON_VER: 2.7
 
         steps:
             - checkout
 
             - run: |
-                conda build conda --python=${CIRCLECI_JOB}
+                conda build conda --python=${PYTHON_VER}
 
             - run: |
                 mkdir /artefacts
-                cp $(conda build conda --python=${CIRCLECI_JOB} --output) /artefacts
+                cp $(conda build conda --python=${PYTHON_VER} --output) /artefacts
 
             - persist_to_workspace:
                 root: /artefacts
                 paths: *
 
-    3.6:
+    py36:
         working_directory: /circleci
         docker:
             - image: scottwales/conda-build
+            - environment:
+                PYTHON_VER: 3.6
 
         steps:
             - checkout
 
             - run: |
-                conda build conda --python=${CIRCLECI_JOB}
+                conda build conda --python=${PYTHON_VER}
 
             - run: |
                 mkdir /artefacts
-                cp $(conda build conda --python=${CIRCLECI_JOB} --output) /artefacts
+                cp $(conda build conda --python=${PYTHON_VER} --output) /artefacts
 
             - persist_to_workspace:
                 root: /artefacts
@@ -53,20 +57,20 @@ workflows:
     version: 2
     conda_build_and_upload:
         jobs:
-            - 2.7:
+            - py27:
                 filters:
                     tags:
                         only: /.*/
 
-            - 3.6:
+            - py36:
                 filters:
                     tags:
                         only: /.*/
 
             - conda_upload:
                 requires:
-                    - '2.7'
-                    - '3.6'
+                    - py27
+                    - py36
                 filters:
                     tags:
                         only: /.*/
